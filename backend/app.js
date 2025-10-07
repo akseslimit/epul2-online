@@ -97,7 +97,16 @@ app.use((err, req, res, next) => {
 });
 
 // ================== START SERVER ==================
+const { connectDatabase } = require("./db"); // ⬅️ pastikan ini ada di atas
+
+// Jalankan koneksi database dulu baru start server
+const mode = process.env.DB_MODE || (process.env.NODE_ENV === "production" ? "supabase" : "local");
+
+console.log(`🚀 Starting app in ${process.env.NODE_ENV} mode...`);
+console.log(`🧩 Database mode: ${mode}`);
+
+connectDatabase(mode);
+
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`✅ Server running at http://0.0.0.0:${PORT}`);
 });
-
