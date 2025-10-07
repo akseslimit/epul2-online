@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <style>
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(to right, #d1fae5, #a7f3d0);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+    .container {
+      text-align: center;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+      max-width: 450px;
+      width: 100%;
+    }
+    h1 {
+      font-size: 3rem;
+      color: #10b981;
+      margin-bottom: 16px;
+    }
+    p {
+      color: #555;
+      margin-bottom: 20px;
+      font-size: 1.1rem;
+    }
+    a {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #059669;
+      color: white;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: background 0.3s ease;
+    }
+    a:hover {
+      background: #047857;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>✔ Success</h1>
+    <p><%= message || "Your action was completed successfully!" %></p>
+    <a href="/">Back to Dashboard</a>
+  </div>
+</body>
+</html>

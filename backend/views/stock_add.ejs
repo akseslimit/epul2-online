@@ -1,0 +1,40 @@
+<div class="card shadow-sm">
+  <div class="card-header bg-dark text-white">
+    <h5 class="mb-0"><i class="fa fa-plus"></i> Tambah Stok</h5>
+  </div>
+  <div class="card-body">
+    <form action="/stock/add" method="POST">
+      <div class="mb-3">
+        <label class="form-label">Produk</label>
+        <select class="form-select" name="product_id" required>
+          <option value="">-- Pilih Produk --</option>
+          <% products.forEach(p => { %>
+            <option value="<%= p.id %>"><%= p.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Toko</label>
+        <select class="form-select" name="store_id" required>
+          <option value="">-- Pilih Toko --</option>
+          <% stores.forEach(s => { %>
+            <option value="<%= s.id %>"><%= s.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Jumlah</label>
+        <input type="number" class="form-control" name="quantity" min="0" required>
+      </div>
+
+      <button type="submit" class="btn btn-success">
+        <i class="fa fa-save"></i> Simpan
+      </button>
+      <a href="/stock" class="btn btn-secondary">
+        <i class="fa fa-arrow-left"></i> Kembali
+      </a>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,35 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2><i class="fa fa-cash-register"></i> <%= title %></h2>
+  <a href="/sales/add" class="btn btn-primary">
+    <i class="fa fa-plus"></i> Tambah Penjualan
+  </a>
+</div>
+
+<table class="table table-striped table-hover shadow-sm">
+  <thead class="table-dark">
+    <tr>
+      <th>Produk</th>
+      <th>Salesman</th>
+      <th>Toko</th>
+      <th>Qty</th>
+      <th>Total</th>
+      <th>Tanggal</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (!data || data.length === 0) { %>
+      <tr><td colspan="6" class="text-center text-muted">Belum ada penjualan</td></tr>
+    <% } else { %>
+      <% data.forEach(sale => { %>
+        <tr>
+          <td><%= sale.product %></td>
+          <td><%= sale.salesman %></td>
+          <td><%= sale.store %></td>
+          <td><%= sale.quantity %></td>
+          <td>Rp <%= Number(sale.total_price).toLocaleString() %></td>
+          <td><%= sale.transaction_date ? new Date(sale.transaction_date).toLocaleString() : '-' %></td>
+        </tr>
+      <% }) %>
+    <% } %>
+  </tbody>
+</table>

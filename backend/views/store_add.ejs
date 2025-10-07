@@ -1,0 +1,19 @@
+<div class="card shadow-sm">
+  <div class="card-header bg-dark text-white">
+    <h5><i class="fa fa-plus"></i> Tambah Toko</h5>
+  </div>
+  <div class="card-body">
+    <form action="/stores/add" method="POST">
+      <div class="mb-3">
+        <label class="form-label">Nama Toko</label>
+        <input type="text" class="form-control" name="name" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Area</label>
+        <input type="text" class="form-control" name="area" required>
+      </div>
+      <button type="submit" class="btn btn-success"><i class="fa fa-save"></i> Simpan</button>
+      <a href="/stores" class="btn btn-secondary">Batal</a>
+    </form>
+  </div>
+</div>

@@ -1,0 +1,29 @@
+<div class="container my-4">
+  <h2><i class="fa fa-upload"></i> Import & Export Data</h2>
+  <p class="text-muted">Gunakan template untuk mengisi data lalu upload ke sini.</p>
+
+  <div class="row">
+    <% ["users","products","sales","distribution"].forEach(tbl => { %>
+      <div class="col-md-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-header bg-primary text-white">
+            <h5 class="mb-0 text-capitalize"><i class="fa fa-database"></i> <%= tbl %></h5>
+          </div>
+          <div class="card-body">
+            <a href="/import-export/template/<%= tbl %>" class="btn btn-sm btn-success mb-2">
+              <i class="fa fa-download"></i> Download Template
+            </a>
+            <form action="/import-export/upload/<%= tbl %>" method="POST" enctype="multipart/form-data">
+              <div class="mb-2">
+                <input type="file" name="file" accept=".xlsx" class="form-control" required>
+              </div>
+              <button type="submit" class="btn btn-sm btn-primary">
+                <i class="fa fa-upload"></i> Upload Data
+              </button>
+            </form>
+          </div>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+</div>

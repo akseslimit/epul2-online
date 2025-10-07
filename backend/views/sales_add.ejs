@@ -1,0 +1,49 @@
+<div class="card shadow-sm">
+  <div class="card-header bg-primary text-white">
+    <h5 class="mb-0"><i class="fa fa-plus"></i> Tambah Penjualan</h5>
+  </div>
+  <div class="card-body">
+    <form action="/sales/add" method="POST">
+      <div class="mb-3">
+        <label class="form-label">Produk</label>
+        <select name="product_id" class="form-select" required>
+          <% products.forEach(product => { %>
+            <option value="<%= product.id %>">
+              <%= product.name %> (Rp <%= Number(product.price).toLocaleString() %>)
+            </option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Salesman</label>
+        <select name="salesman_id" class="form-select" required>
+          <% users.forEach(user => { %>
+            <option value="<%= user.id %>"><%= user.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Toko</label>
+        <select name="store_id" class="form-select" required>
+          <% stores.forEach(store => { %>
+            <option value="<%= store.id %>"><%= store.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label">Jumlah</label>
+        <input type="number" name="quantity" class="form-control" min="1" required>
+      </div>
+
+      <button type="submit" class="btn btn-success">
+        <i class="fa fa-save"></i> Simpan
+      </button>
+      <a href="/sales" class="btn btn-secondary">
+        <i class="fa fa-arrow-left"></i> Kembali
+      </a>
+    </form>
+  </div>
+</div>

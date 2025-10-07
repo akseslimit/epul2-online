@@ -1,0 +1,29 @@
+<h2>Daftar Users</h2>
+<a href="/users/add" class="btn btn-primary mb-3"><i class="fa fa-plus"></i> Tambah User</a>
+
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Nama</th>
+      <th>Email</th>
+      <th>Role</th>
+      <th>Area</th>
+      <th>Dibuat</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% if (users && users.length > 0) { %>
+      <% users.forEach(u => { %>
+        <tr>
+          <td><%= u.name %></td>
+          <td><%= u.email %></td>
+          <td><%= u.role %></td>
+          <td><%= u.area %></td>
+          <td><%= u.created_at.toLocaleString() %></td>
+        </tr>
+      <% }) %>
+    <% } else { %>
+      <tr><td colspan="5" class="text-center">Belum ada user</td></tr>
+    <% } %>
+  </tbody>
+</table>

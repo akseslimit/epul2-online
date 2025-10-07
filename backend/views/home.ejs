@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %></title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+  <style>
+    body {
+      background: url("https://png.pngtree.com/background/20250117/original/pngtree-perfume-sprayer-bottle-close-up-and-with-colorful-lightflare-background-picture-image_15783465.jpg") no-repeat center center fixed;
+      background-size: cover;
+      min-height: 100vh;
+      color: #ffffff;
+      position: relative;
+    }
+    .overlay {
+      background-color: rgba(0, 0, 0, 0.6);
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      z-index: -1;
+    }
+    .menu-box {
+      background-color: rgba(255, 255, 255, 0.85);
+      border-radius: 12px;
+      padding: 2rem;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    }
+    .menu-item {
+      text-align: center;
+      transition: transform 0.2s;
+    }
+    .menu-item a {
+      color: #333;
+      text-decoration: none;
+      display: inline-block;
+      transition: color 0.3s;
+    }
+    .menu-item i {
+      font-size: 2.5rem;
+      color: #555;
+      transition: color 0.3s, transform 0.2s;
+    }
+    .menu-item a:hover i {
+      color: #0d6efd; /* biru saat hover */
+      transform: scale(1.2);
+    }
+    .menu-item a:active i {
+      color: #198754; /* hijau saat klik */
+    }
+  </style>
+</head>
+<body>
+  <div class="overlay"></div>
+  <div class="container vh-100 d-flex flex-column justify-content-center align-items-center">
+    <h1 class="mb-4 fw-bold text-white shadow-lg">Perfume Backend</h1>
+    <div class="row row-cols-2 row-cols-md-3 g-4 menu-box">
+      <div class="col menu-item">
+        <a href="/users">
+          <i class="fa fa-users"></i><br>Users
+        </a>
+      </div>
+      <div class="col menu-item">
+        <a href="/products">
+          <i class="fa fa-box"></i><br>Products
+        </a>
+      </div>
+      <div class="col menu-item">
+        <a href="/stores">
+          <i class="fa fa-store"></i><br>Stores
+        </a>
+      </div>
+      <div class="col menu-item">
+        <a href="/stock">
+          <i class="fa fa-warehouse"></i><br>Stock
+        </a>
+      </div>
+      <div class="col menu-item">
+        <a href="/sales">
+          <i class="fa fa-cash-register"></i><br>Sales
+        </a>
+      </div>
+      <div class="col menu-item">
+        <a href="/distribution">
+          <i class="fa fa-truck"></i><br>Distribution
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

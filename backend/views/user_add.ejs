@@ -1,0 +1,27 @@
+<h2>Tambah User</h2>
+
+<form method="POST" action="/users/add">
+  <div class="mb-3">
+    <label>Nama</label>
+    <input type="text" name="name" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label>Email</label>
+    <input type="email" name="email" class="form-control" required>
+  </div>
+  <div class="mb-3">
+    <label>Role</label>
+    <select name="role" class="form-control">
+      <option value="admin">Admin</option>
+      <option value="sales">Sales</option>
+      <option value="outlet">Outlet</option>
+      <option value="gudang">Gudang</option>
+    </select>
+  </div>
+  <div class="mb-3">
+    <label>Area</label>
+    <input type="text" name="area" class="form-control" required>
+  </div>
+  <button type="submit" class="btn btn-success">Simpan</button>
+  <a href="/users" class="btn btn-secondary">Batal</a>
+</form>

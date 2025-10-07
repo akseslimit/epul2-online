@@ -1,0 +1,43 @@
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h2 class="fw-bold"><i class="fa fa-cash-register"></i> Sales</h2>
+  <a href="/sales/add" class="btn btn-primary">
+    <i class="fa fa-plus"></i> Tambah Sales
+  </a>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body">
+    <table class="table table-hover table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>ID</th>
+          <th>Produk</th>
+          <th>Salesman</th>
+          <th>Toko</th>
+          <th>Qty</th>
+          <th>Total Harga</th>
+          <th>Tanggal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (sales.length > 0) { %>
+          <% sales.forEach(s => { %>
+            <tr>
+              <td><%= s.id %></td>
+              <td><%= s.product %></td>
+              <td><%= s.salesman %></td>
+              <td><%= s.store %></td>
+              <td><%= s.quantity %></td>
+              <td>Rp <%= s.total_price.toLocaleString("id-ID") %></td>
+              <td><%= new Date(s.transaction_date).toLocaleString("id-ID") %></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr>
+            <td colspan="7" class="text-center text-muted">Belum ada data sales</td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
