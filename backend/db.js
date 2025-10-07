@@ -9,7 +9,8 @@ function connectDatabase(mode = "local") {
     ? {
         connectionString: process.env.DATABASE_URL,
         ssl: {
-          rejectUnauthorized: false, // ⚠️ WAJIB untuk Supabase / Railway
+          require: true,
+          rejectUnauthorized: false, // ⚠️ Supabase butuh SSL tanpa sertifikat lokal
         },
       }
     : {
@@ -29,7 +30,14 @@ function connectDatabase(mode = "local") {
     })
     .catch((err) => {
       console.error("❌ Gagal koneksi DB:", err.message);
+      // Tambahkan sedikit delay biar tidak spam koneksi
+      setTimeout(() => connectDatabase(mode), 5000);
     });
+
+  // Optional: log error runtime (misalnya koneksi tiba-tiba mati)
+  pool.on("error", (err) => {
+    console.error("⚠️ Error koneksi database:", err.message);
+  });
 }
 
 function getPool() {
