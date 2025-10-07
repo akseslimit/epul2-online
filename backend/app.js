@@ -17,15 +17,21 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ✅ CORS (React frontend di port 5173)
+// ✅ CORS (support lokal + Railway + frontend online)
+const allowedOrigins = [
+  "http://localhost:5173", // frontend lokal
+  "https://epul2-online-production.up.railway.app", // backend online
+  "https://namadomainfrontendkamu.vercel.app", // nanti frontend deploy
+];
+
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   })
 );
 
-// ✅ Session untuk login
+// ✅ Session
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "rahasia123",
@@ -33,21 +39,21 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // ubah ke true kalau sudah pakai HTTPS
+      secure: process.env.NODE_ENV === "production", // aktif hanya di HTTPS
       sameSite: "lax",
       maxAge: 1000 * 60 * 60, // 1 jam
     },
   })
 );
 
-// ✅ serve file upload agar bisa diakses frontend
+// ✅ Serve file upload
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 // ================== ROUTES ==================
 app.use("/users", require("./routes/users"));
 app.use("/products", require("./routes/products"));
 app.use("/stores", require("./routes/stores"));
-app.use("/stock", require("./routes/stock")); // JSON API
+app.use("/stock", require("./routes/stock"));
 app.use("/sales", require("./routes/sales"));
 app.use("/distribution", require("./routes/distribution"));
 app.use("/import-export", require("./routes/importExport"));
@@ -55,15 +61,12 @@ app.use("/auth", require("./routes/auth"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 app.use("/api/reports", require("./routes/reports"));
 
-
-// ================== MIDDLEWARE CEK LOGIN ==================
+// ================== CEK LOGIN ==================
 function requireLogin(req, res, next) {
   if (!req.session.user) {
-    // Kalau request dari frontend (React / API)
     if (req.originalUrl.startsWith("/api") || req.headers.accept?.includes("application/json")) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    // Kalau request dari browser langsung (EJS)
     return res.redirect("/auth/login");
   }
   next();
@@ -95,5 +98,5 @@ app.use((err, req, res, next) => {
 
 // ================== START SERVER ==================
 app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
