@@ -1,23 +1,24 @@
-// di atas Pool config
-const { lookup } = require("dns").promises;
+// ================== FIX: Paksa Node pakai IPv4 (bukan IPv6) ==================
+process.env.NODE_OPTIONS = "--dns-result-order=ipv4first";
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv4first");
+// ============================================================================
 
-async function connectDatabase(mode = "local") {
+require("dotenv").config();
+const { Pool } = require("pg");
+
+let pool;
+
+function connectDatabase(mode = "local") {
   const isSupabase = mode === "supabase";
-
-  // paksa resolusi IPv4 Supabase
-  if (isSupabase && process.env.DATABASE_URL.includes("supabase.co")) {
-    try {
-      const addr = await lookup("db.pnohynmtrgcmtuecsymt.supabase.co", { family: 4 });
-      console.log("✅ Supabase IPv4 address:", addr.address);
-    } catch (e) {
-      console.warn("⚠️ Gagal resolve IPv4 Supabase:", e.message);
-    }
-  }
 
   const config = isSupabase
     ? {
         connectionString: process.env.DATABASE_URL,
-        ssl: { require: true, rejectUnauthorized: false },
+        ssl: {
+          require: true,
+          rejectUnauthorized: false,
+        },
         keepAlive: true,
         connectionTimeoutMillis: 10000,
       }
@@ -29,6 +30,27 @@ async function connectDatabase(mode = "local") {
         database: process.env.DB_NAME || "db_lokal",
       };
 
-  const pool = new Pool(config);
-  ...
+  pool = new Pool(config);
+
+  pool
+    .connect()
+    .then(() => {
+      console.log(`✅ Terhubung ke database (${isSupabase ? "Supabase" : "Lokal"})`);
+    })
+    .catch((err) => {
+      console.error("❌ Gagal koneksi DB:", err.message);
+      console.log("⏳ Mencoba ulang koneksi dalam 5 detik...");
+      setTimeout(() => connectDatabase(mode), 5000);
+    });
+
+  pool.on("error", (err) => {
+    console.error("⚠️ Error koneksi database:", err.message);
+  });
 }
+
+function getPool() {
+  if (!pool) throw new Error("Database belum dikonfigurasi!");
+  return pool;
+}
+
+module.exports = { connectDatabase, getPool };
