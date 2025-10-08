@@ -15,23 +15,30 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// ✅ AUTO DETECT URL BACKEND
+const API_BASE =
+  import.meta.env.VITE_API_URL ||
+  (window.location.hostname === "localhost"
+    ? "http://localhost:3000"
+    : "https://epul2-online-production.up.railway.app");
+
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
 
   const signIn = async (email: string, password: string) => {
     try {
-      const res = await fetch("http://localhost:3000/auth/login", {
+      const res = await fetch(`${API_BASE}/auth/login`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include", // penting untuk session
+        credentials: "include", // penting untuk session cookies
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json();
       if (!res.ok) return { error: data.error || "Invalid login" };
 
-      // cek session
-      const res2 = await fetch("http://localhost:3000/auth/me", {
+      // ✅ Ambil data session
+      const res2 = await fetch(`${API_BASE}/auth/me`, {
         credentials: "include",
       });
       const data2 = await res2.json();
@@ -39,13 +46,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(data2.user);
       return {};
     } catch (err) {
-      console.error(err);
+      console.error("❌ Login error:", err);
       return { error: "Network error" };
     }
   };
 
   const signOut = async () => {
-    await fetch("http://localhost:3000/auth/logout", {
+    await fetch(`${API_BASE}/auth/logout`, {
       method: "POST",
       credentials: "include",
     });

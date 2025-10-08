@@ -1,31 +1,49 @@
+// ================== FIX: Paksa Node pakai IPv6 dulu ==================
+process.env.NODE_OPTIONS = "--dns-result-order=ipv6first";
+const dns = require("dns");
+dns.setDefaultResultOrder("ipv6first");
+// ================================================================
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const session = require("express-session");
+const readline = require("readline");
 require("dotenv").config();
+
+const { connectDatabase } = require("./db");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // ================== MIDDLEWARE ==================
-// View Engine
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
-// Static & Body Parser
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ✅ CORS (React frontend di port 5173)
+<<<<<<< HEAD
+=======
+// ✅ CORS (support lokal + Railway + frontend online)
+const allowedOrigins = [
+  "http://localhost:5173", // frontend lokal
+  "https://epul2-online-production.up.railway.app", // backend online
+  "https://namadomainfrontendkamu.vercel.app", // nanti frontend deploy
+];
+
+>>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: allowedOrigins,
     credentials: true,
   })
 );
 
-// ✅ Session untuk login
+<<<<<<< HEAD
+=======
+// ✅ Session
+>>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "rahasia123",
@@ -33,21 +51,28 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: false, // ubah ke true kalau sudah pakai HTTPS
+<<<<<<< HEAD
+      secure: false,
+=======
+      secure: process.env.NODE_ENV === "production", // aktif hanya di HTTPS
+>>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60, // 1 jam
+      maxAge: 1000 * 60 * 60,
     },
   })
 );
 
-// ✅ serve file upload agar bisa diakses frontend
+<<<<<<< HEAD
+=======
+// ✅ Serve file upload
+>>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 // ================== ROUTES ==================
 app.use("/users", require("./routes/users"));
 app.use("/products", require("./routes/products"));
 app.use("/stores", require("./routes/stores"));
-app.use("/stock", require("./routes/stock")); // JSON API
+app.use("/stock", require("./routes/stock"));
 app.use("/sales", require("./routes/sales"));
 app.use("/distribution", require("./routes/distribution"));
 app.use("/import-export", require("./routes/importExport"));
@@ -55,15 +80,16 @@ app.use("/auth", require("./routes/auth"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 app.use("/api/reports", require("./routes/reports"));
 
-
+<<<<<<< HEAD
 // ================== MIDDLEWARE CEK LOGIN ==================
+=======
+// ================== CEK LOGIN ==================
+>>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
 function requireLogin(req, res, next) {
   if (!req.session.user) {
-    // Kalau request dari frontend (React / API)
     if (req.originalUrl.startsWith("/api") || req.headers.accept?.includes("application/json")) {
       return res.status(401).json({ error: "Unauthorized" });
     }
-    // Kalau request dari browser langsung (EJS)
     return res.redirect("/auth/login");
   }
   next();
@@ -93,7 +119,49 @@ app.use((err, req, res, next) => {
   }
 });
 
+<<<<<<< HEAD
+// ================== PILIH MODE DATABASE ==================
+const rl = readline.createInterface({
+  input: process.stdin,
+  output: process.stdout,
+=======
 // ================== START SERVER ==================
-app.listen(PORT, () => {
-  console.log(`🚀 Server running at http://localhost:${PORT}`);
+const { connectDatabase } = require("./db"); // ⬅️ pastikan ini ada di atas
+
+// Jalankan koneksi database dulu baru start server
+const mode = process.env.DB_MODE || (process.env.NODE_ENV === "production" ? "supabase" : "local");
+
+console.log(`🚀 Starting app in ${process.env.NODE_ENV} mode...`);
+console.log(`🧩 Database mode: ${mode}`);
+
+connectDatabase(mode);
+
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Server running at http://0.0.0.0:${PORT}`);
+>>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
 });
+
+const envMode = process.env.DB_MODE || "local";
+
+if (process.env.NODE_ENV === "production") {
+  // 💡 Mode otomatis (tanpa prompt)
+  console.log(`🚀 Mode otomatis: ${envMode.toUpperCase()}`);
+  connectDatabase(envMode);
+  app.listen(PORT, () => {
+    console.log(`✅ Server running at http://localhost:${PORT}`);
+  });
+} else {
+  // 💬 Mode manual (bisa pilih)
+  console.log("\n📦 Pilih mode koneksi database:");
+  console.log("1. Lokal");
+  console.log("2. Supabase");
+
+  rl.question("Masukkan pilihan (1/2): ", (answer) => {
+    const mode = answer.trim() === "2" ? "supabase" : "local";
+    connectDatabase(mode);
+    app.listen(PORT, () => {
+      console.log(`✅ Server running at http://localhost:${PORT}`);
+    });
+    rl.close();
+  });
+}

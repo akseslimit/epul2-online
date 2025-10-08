@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "Backend CLI untuk PostgreSQL + laporan Excel",
   "main": "app.js",
+  "engines": {
+    "node": "22.x"
+  },
   "scripts": {
     "start": "node app.js",
     "seed": "node seed.js"
