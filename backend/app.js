@@ -2,7 +2,8 @@
 process.env.NODE_OPTIONS = "--dns-result-order=ipv6first";
 const dns = require("dns");
 dns.setDefaultResultOrder("ipv6first");
-// ================================================================
+// ===================================================================
+
 const express = require("express");
 const path = require("path");
 const cors = require("cors");
@@ -18,21 +19,17 @@ const PORT = process.env.PORT || 3000;
 // ================== MIDDLEWARE ==================
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
-
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-<<<<<<< HEAD
-=======
 // ✅ CORS (support lokal + Railway + frontend online)
 const allowedOrigins = [
   "http://localhost:5173", // frontend lokal
-  "https://epul2-online-production.up.railway.app", // backend online
+  "https://epul2-online-production.up.railway.app", // backend Railway
   "https://namadomainfrontendkamu.vercel.app", // nanti frontend deploy
 ];
 
->>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
 app.use(
   cors({
     origin: allowedOrigins,
@@ -40,10 +37,7 @@ app.use(
   })
 );
 
-<<<<<<< HEAD
-=======
 // ✅ Session
->>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
 app.use(
   session({
     secret: process.env.SESSION_SECRET || "rahasia123",
@@ -51,21 +45,14 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-<<<<<<< HEAD
-      secure: false,
-=======
       secure: process.env.NODE_ENV === "production", // aktif hanya di HTTPS
->>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60,
+      maxAge: 1000 * 60 * 60, // 1 jam
     },
   })
 );
 
-<<<<<<< HEAD
-=======
 // ✅ Serve file upload
->>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
 
 // ================== ROUTES ==================
@@ -80,11 +67,7 @@ app.use("/auth", require("./routes/auth"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 app.use("/api/reports", require("./routes/reports"));
 
-<<<<<<< HEAD
-// ================== MIDDLEWARE CEK LOGIN ==================
-=======
 // ================== CEK LOGIN ==================
->>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
 function requireLogin(req, res, next) {
   if (!req.session.user) {
     if (req.originalUrl.startsWith("/api") || req.headers.accept?.includes("application/json")) {
@@ -119,39 +102,23 @@ app.use((err, req, res, next) => {
   }
 });
 
-<<<<<<< HEAD
-// ================== PILIH MODE DATABASE ==================
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-=======
 // ================== START SERVER ==================
-const { connectDatabase } = require("./db"); // ⬅️ pastikan ini ada di atas
-
-// Jalankan koneksi database dulu baru start server
-const mode = process.env.DB_MODE || (process.env.NODE_ENV === "production" ? "supabase" : "local");
-
-console.log(`🚀 Starting app in ${process.env.NODE_ENV} mode...`);
-console.log(`🧩 Database mode: ${mode}`);
-
-connectDatabase(mode);
-
-app.listen(PORT, "0.0.0.0", () => {
-  console.log(`✅ Server running at http://0.0.0.0:${PORT}`);
->>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
-});
-
-const envMode = process.env.DB_MODE || "local";
+const envMode = process.env.DB_MODE || (process.env.NODE_ENV === "production" ? "supabase" : "local");
 
 if (process.env.NODE_ENV === "production") {
-  // 💡 Mode otomatis (tanpa prompt)
+  // 💡 Mode otomatis (Railway)
   console.log(`🚀 Mode otomatis: ${envMode.toUpperCase()}`);
   connectDatabase(envMode);
-  app.listen(PORT, () => {
-    console.log(`✅ Server running at http://localhost:${PORT}`);
+  app.listen(PORT, "0.0.0.0", () => {
+    console.log(`✅ Server running at http://0.0.0.0:${PORT}`);
   });
 } else {
-  // 💬 Mode manual (bisa pilih)
+  // 💬 Mode manual (lokal)
+  const rl = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
   console.log("\n📦 Pilih mode koneksi database:");
   console.log("1. Lokal");
   console.log("2. Supabase");

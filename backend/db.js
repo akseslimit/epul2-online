@@ -1,41 +1,9 @@
-<<<<<<< HEAD
-require("dotenv").config();
-const { Pool } = require("pg");
+// ================== FIX: Paksa Node pakai IPv6 dulu ==================
+process.env.NODE_OPTIONS = "--dns-result-order=ipv6first";
 const dns = require("dns");
-
-// Paksa prioritaskan IPv6
 dns.setDefaultResultOrder("ipv6first");
 
-let pool;
-
-function connectDatabase(mode) {
-  if (mode === "supabase") {
-    pool = new Pool({
-      connectionString: process.env.DATABASE_URL,
-      ssl: { rejectUnauthorized: false },
-      keepAlive: true,
-      connectionTimeoutMillis: 10000,
-    });
-    console.log("🌐 Menggunakan database Supabase");
-  } else {
-    pool = new Pool({
-      host: process.env.DB_HOST,
-      user: process.env.DB_USER,
-      password: process.env.DB_PASS,
-      database: process.env.DB_NAME,
-      port: process.env.DB_PORT,
-    });
-    console.log("💻 Menggunakan database lokal");
-  }
-
-  pool
-    .connect()
-    .then(() => console.log("✅ Terhubung ke PostgreSQL"))
-    .catch((err) => console.error("❌ Gagal koneksi DB:", err.message));
-}
-
-module.exports = { connectDatabase };
-=======
+require("dotenv").config();
 const { Pool } = require("pg");
 
 let pool;
@@ -48,8 +16,10 @@ function connectDatabase(mode = "local") {
         connectionString: process.env.DATABASE_URL,
         ssl: {
           require: true,
-          rejectUnauthorized: false, // ⚠️ Supabase butuh SSL tanpa sertifikat lokal
+          rejectUnauthorized: false, // ⚠️ wajib untuk Supabase / Railway
         },
+        keepAlive: true,
+        connectionTimeoutMillis: 10000,
       }
     : {
         host: process.env.DB_HOST || "localhost",
@@ -68,11 +38,11 @@ function connectDatabase(mode = "local") {
     })
     .catch((err) => {
       console.error("❌ Gagal koneksi DB:", err.message);
-      // Tambahkan sedikit delay biar tidak spam koneksi
+      console.log("⏳ Mencoba ulang koneksi dalam 5 detik...");
       setTimeout(() => connectDatabase(mode), 5000);
     });
 
-  // Optional: log error runtime (misalnya koneksi tiba-tiba mati)
+  // ✅ Tangani error runtime (misal koneksi terputus)
   pool.on("error", (err) => {
     console.error("⚠️ Error koneksi database:", err.message);
   });
@@ -84,4 +54,3 @@ function getPool() {
 }
 
 module.exports = { connectDatabase, getPool };
->>>>>>> 5febf52f4296278d5750e56db24e46589332dccc
