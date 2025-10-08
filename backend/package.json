@@ -6,10 +6,9 @@
   "engines": {
     "node": "22.x"
   },
-  "scripts": {
-    "start": "node app.js",
-    "seed": "node seed.js"
-  },
+ "scripts": {
+  "start": "cd backend && node app.js"
+}
   "dependencies": {
     "bcrypt": "^6.0.0",
     "cors": "^2.8.5",
