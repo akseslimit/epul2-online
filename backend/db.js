@@ -11,13 +11,13 @@ let pool;
 async function connectDatabase(mode = "local") {
   const isSupabase = mode === "supabase";
 
-  // ✅ Resolve manual IPv4 Supabase
-  if (isSupabase && process.env.DATABASE_URL.includes("supabase.co")) {
+  // ✅ Resolve manual IPv4 untuk Supabase Pooler
+  if (isSupabase && process.env.DATABASE_URL.includes("supabase.com")) {
     try {
-      const addr = await lookup("db.pnohynmtrgcmtuecsymt.supabase.co", { family: 4 });
+      const addr = await lookup("aws-1-ap-southeast-1.pooler.supabase.com", { family: 4 });
       console.log("✅ Supabase IPv4 resolved:", addr.address);
       process.env.DATABASE_URL = process.env.DATABASE_URL.replace(
-        "db.pnohynmtrgcmtuecsymt.supabase.co",
+        "aws-1-ap-southeast-1.pooler.supabase.com",
         addr.address
       );
     } catch (err) {
@@ -25,6 +25,7 @@ async function connectDatabase(mode = "local") {
     }
   }
 
+  // ✅ Konfigurasi koneksi database
   const config = isSupabase
     ? {
         connectionString: process.env.DATABASE_URL,
@@ -42,6 +43,7 @@ async function connectDatabase(mode = "local") {
 
   pool = new Pool(config);
 
+  // ✅ Coba koneksi ke database
   pool
     .connect()
     .then(() => {
@@ -53,11 +55,13 @@ async function connectDatabase(mode = "local") {
       setTimeout(() => connectDatabase(mode), 5000);
     });
 
+  // ✅ Tangani error runtime
   pool.on("error", (err) => {
     console.error("⚠️ Error koneksi database:", err.message);
   });
 }
 
+// ✅ Getter Pool (akses dari file lain)
 function getPool() {
   if (!pool) throw new Error("Database belum dikonfigurasi!");
   return pool;
