@@ -8,7 +8,6 @@ const express = require("express");
 const path = require("path");
 const cors = require("cors");
 const session = require("express-session");
-const readline = require("readline");
 require("dotenv").config();
 
 const { connectDatabase } = require("./db");
@@ -19,6 +18,7 @@ const PORT = process.env.PORT || 3000;
 // ================== MIDDLEWARE ==================
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
+
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -103,32 +103,13 @@ app.use((err, req, res, next) => {
 });
 
 // ================== START SERVER ==================
-const envMode = process.env.DB_MODE || (process.env.NODE_ENV === "production" ? "supabase" : "local");
+const mode = process.env.DB_MODE || (process.env.NODE_ENV === "production" ? "supabase" : "local");
 
-if (process.env.NODE_ENV === "production") {
-  // 💡 Mode otomatis (Railway)
-  console.log(`🚀 Mode otomatis: ${envMode.toUpperCase()}`);
-  connectDatabase(envMode);
-  app.listen(PORT, "0.0.0.0", () => {
-    console.log(`✅ Server running at http://0.0.0.0:${PORT}`);
-  });
-} else {
-  // 💬 Mode manual (lokal)
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
+console.log(`🚀 Starting app in ${process.env.NODE_ENV} mode...`);
+console.log(`🧩 Database mode: ${mode}`);
 
-  console.log("\n📦 Pilih mode koneksi database:");
-  console.log("1. Lokal");
-  console.log("2. Supabase");
+connectDatabase(mode);
 
-  rl.question("Masukkan pilihan (1/2): ", (answer) => {
-    const mode = answer.trim() === "2" ? "supabase" : "local";
-    connectDatabase(mode);
-    app.listen(PORT, () => {
-      console.log(`✅ Server running at http://localhost:${PORT}`);
-    });
-    rl.close();
-  });
-}
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`✅ Server running at http://0.0.0.0:${PORT}`);
+});
