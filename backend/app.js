@@ -1,4 +1,4 @@
-// ================== FIX: Paksa Node pakai IPv6 dulu ==================
+// ================== Paksa Node pakai IPv6 dulu ==================
 process.env.NODE_OPTIONS = "--dns-result-order=ipv6first";
 const dns = require("dns");
 dns.setDefaultResultOrder("ipv6first");
@@ -17,25 +17,19 @@ const PORT = process.env.PORT || 3000;
 
 // ================== MIDDLEWARE ==================
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
+app.set("views", path.join(__dirname, "views")); // sudah benar untuk struktur kamu
 
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
-// ✅ CORS (support lokal + Railway + frontend online)
+// ✅ CORS
 const allowedOrigins = [
-  "http://localhost:5173", // frontend lokal
-  "https://epul2-online-production.up.railway.app", // backend Railway
-  "https://namadomainfrontendkamu.vercel.app", // nanti frontend deploy
+  "http://localhost:5173",
+  "https://epul2-online-production.up.railway.app",
+  "https://namadomainfrontendkamu.vercel.app",
 ];
-
-app.use(
-  cors({
-    origin: allowedOrigins,
-    credentials: true,
-  })
-);
+app.use(cors({ origin: allowedOrigins, credentials: true }));
 
 // ✅ Session
 app.use(
@@ -45,12 +39,17 @@ app.use(
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // aktif hanya di HTTPS
+      secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60, // 1 jam
+      maxAge: 1000 * 60 * 60,
     },
   })
 );
+
+// ✅ Route test
+app.get("/ping", (req, res) => {
+  res.json({ status: "ok", message: "pong from Railway" });
+});
 
 // ✅ Serve file upload
 app.use("/uploads", express.static(path.join(__dirname, "public/uploads")));
@@ -67,20 +66,9 @@ app.use("/auth", require("./routes/auth"));
 app.use("/api/dashboard", require("./routes/dashboard"));
 app.use("/api/reports", require("./routes/reports"));
 
-// ================== CEK LOGIN ==================
-function requireLogin(req, res, next) {
-  if (!req.session.user) {
-    if (req.originalUrl.startsWith("/api") || req.headers.accept?.includes("application/json")) {
-      return res.status(401).json({ error: "Unauthorized" });
-    }
-    return res.redirect("/auth/login");
-  }
-  next();
-}
-
 // ================== HOMEPAGE ==================
-app.get("/", requireLogin, (req, res) => {
-  res.render("home", { title: "Dashboard Backend", user: req.session.user });
+app.get("/", (req, res) => {
+  res.render("home", { title: "Dashboard Backend", user: null });
 });
 
 // ================== 404 HANDLER ==================
@@ -104,7 +92,6 @@ app.use((err, req, res, next) => {
 
 // ================== START SERVER ==================
 const mode = process.env.DB_MODE || (process.env.NODE_ENV === "production" ? "supabase" : "local");
-
 console.log(`🚀 Starting app in ${process.env.NODE_ENV} mode...`);
 console.log(`🧩 Database mode: ${mode}`);
 
