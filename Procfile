@@ -1,1 +1,1 @@
-web: echo "Skip Procfile, use package.json start"
+web: cd backend && npm start
