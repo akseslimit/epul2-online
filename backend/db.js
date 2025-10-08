@@ -1,24 +1,34 @@
-// ================== FIX: Paksa Node pakai IPv4 (bukan IPv6) ==================
+// ================== Paksa koneksi pakai IPv4 (bukan IPv6) ==================
 process.env.NODE_OPTIONS = "--dns-result-order=ipv4first";
 const dns = require("dns");
 dns.setDefaultResultOrder("ipv4first");
-// ============================================================================
-
+const { lookup } = require("dns").promises;
 require("dotenv").config();
 const { Pool } = require("pg");
 
 let pool;
 
-function connectDatabase(mode = "local") {
+async function connectDatabase(mode = "local") {
   const isSupabase = mode === "supabase";
+
+  // ✅ Resolve manual IPv4 Supabase
+  if (isSupabase && process.env.DATABASE_URL.includes("supabase.co")) {
+    try {
+      const addr = await lookup("db.pnohynmtrgcmtuecsymt.supabase.co", { family: 4 });
+      console.log("✅ Supabase IPv4 resolved:", addr.address);
+      process.env.DATABASE_URL = process.env.DATABASE_URL.replace(
+        "db.pnohynmtrgcmtuecsymt.supabase.co",
+        addr.address
+      );
+    } catch (err) {
+      console.warn("⚠️ Gagal resolve IPv4 Supabase:", err.message);
+    }
+  }
 
   const config = isSupabase
     ? {
         connectionString: process.env.DATABASE_URL,
-        ssl: {
-          require: true,
-          rejectUnauthorized: false,
-        },
+        ssl: { require: true, rejectUnauthorized: false },
         keepAlive: true,
         connectionTimeoutMillis: 10000,
       }
